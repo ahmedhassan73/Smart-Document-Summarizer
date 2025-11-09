@@ -2,7 +2,7 @@
 # Python environment & build
 # -------------------------
 env/
-t5-small-cnn-finetuned/
+
 venv/
 __pycache__/
 *.py[cod]
