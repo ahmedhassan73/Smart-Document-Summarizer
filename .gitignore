@@ -40,7 +40,7 @@ Thumbs.db
 # -------------------------
 # Model checkpoints / large data
 # -------------------------
-t5-small-cnn-finetuned/
+
 checkpoints/
 models/
 *.bin
