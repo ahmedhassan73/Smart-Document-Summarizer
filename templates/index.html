@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Summarizer</title>
+    <link rel="icon" href="../images/logo.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .input-section label i {
+            margin-right: 8px;
+            color: #667eea;
+        }
+
+        .file-upload-section {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-section:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        .file-upload-section.dragover {
+            background: #e3f2fd;
+            border-color: #2196F3;
+        }
+
+        .file-upload-section input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .file-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .file-info.active {
+            display: block;
+        }
+
+        .file-info i {
+            color: #4CAF50;
+            margin-right: 10px;
+        }
+
+        .length-selector {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .slider-container {
+            margin-top: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .slider-label span {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .slider-value {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.5);
+            border: 3px solid #667eea;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.5);
+            border: 3px solid #667eea;
+        }
+
+        .slider-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding: 0 5px;
+        }
+
+        .slider-marker {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            resize: vertical;
+            min-height: 200px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .result-section {
+            margin-top: 40px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            margin-bottom: 20px;
+        }
+
+        .summary-box h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .summary-box h3 i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+
+        .summary-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-box .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .audio-player {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .audio-player h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .audio-player h4 i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+            border-left: 5px solid #c33;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> AI Text Summarizer</h1>
+            <p>Understand more, read less, with smart automated summaries.</p>
+        </header>
+
+        <div class="main-content">
+            <!-- File Upload Section -->
+            <div class="file-upload-section" id="fileUploadSection" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" accept=".pdf,.txt,.docx" onchange="handleFileUpload(event)">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">
+                    Click to upload or drag & drop
+                </div>
+                <div class="upload-subtext">
+                    Supported formats: PDF, TXT, DOCX (Max 50MB)
+                </div>
+            </div>
+
+            <div class="file-info" id="fileInfo">
+                <i class="fas fa-check-circle"></i>
+                <span id="fileName"></span>
+                <button onclick="clearFile()" style="float: right; background: none; border: none; cursor: pointer; color: #c33;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0; color: #999; font-weight: 600;">
+                OR
+            </div>
+
+            <!-- Text Input Section -->
+            <div class="input-section">
+                <label for="inputText">
+                    <i class="fas fa-file-alt"></i> Enter Your Text
+                </label>
+                <textarea 
+                    id="inputText" 
+                    placeholder="Paste your article, document, or any long text here... (minimum 50 characters)"
+                ></textarea>
+            </div>
+
+            <!-- Summary Length Slider -->
+            <div class="length-selector">
+                <label>
+                    <i class="fas fa-sliders-h"></i> Summary Length (Characters)
+                </label>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Adjust the summary length:</span>
+                        <span class="slider-value" id="sliderValue" style="color: white;">300 characters</span>
+                    </div>
+                    <input type="range" min="100" max="1000" value="300" step="50" class="slider" id="lengthSlider" oninput="updateSliderValue(this.value)">
+                    <div class="slider-markers">
+                        <span class="slider-marker">100</span>
+                        <span class="slider-marker">Short</span>
+                        <span class="slider-marker">Medium</span>
+                        <span class="slider-marker">Long</span>
+                        <span class="slider-marker">1000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" id="summarizeBtn" onclick="summarizeText()">
+                    <i class="fas fa-magic"></i> Generate Summary
+                </button>
+                <button class="btn-secondary" id="clearBtn" onclick="clearAll()">
+                    <i class="fas fa-redo"></i> Clear All
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating summary... Please wait</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="result-section" id="resultSection">
+                <div class="stats-container" id="statsContainer"></div>
+
+                <div class="summary-box">
+                    <h3><i class="fas fa-check-circle"></i> Summary</h3>
+                    <div class="summary-text" id="summaryText"></div>
+                </div>
+
+                <button class="btn-primary" onclick="convertToSpeech()" id="ttsBtn">
+                    <i class="fas fa-volume-up"></i> Convert to Speech
+                </button>
+
+                <div class="audio-player" id="audioPlayer" style="display: none;">
+                    <h4><i class="fas fa-headphones"></i> Listen to Summary</h4>
+                    <audio controls id="audioElement"></audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSummary = '';
+        let summaryLength = 300; // Default 300 characters
+
+        // Update slider value display
+        function updateSliderValue(value) {
+            summaryLength = parseInt(value);
+            document.getElementById('sliderValue').textContent = value + ' characters';
+        }
+
+        // Drag and drop functionality
+        const fileUploadSection = document.getElementById('fileUploadSection');
+
+        fileUploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadSection.classList.add('dragover');
+        });
+
+        fileUploadSection.addEventListener('dragleave', () => {
+            fileUploadSection.classList.remove('dragover');
+        });
+
+        fileUploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadSection.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload({ target: { files: files } });
+            }
+        });
+
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const errorMessage = document.getElementById('errorMessage');
+
+            errorMessage.classList.remove('active');
+
+            try {
+                fileName.textContent = `Uploading ${file.name}...`;
+                fileInfo.classList.add('active');
+
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('inputText').value = data.text;
+                    fileName.textContent = `✓ ${data.filename} loaded successfully`;
+                } else {
+                    fileInfo.classList.remove('active');
+                    showError(data.error || 'Failed to upload file');
+                }
+            } catch (error) {
+                fileInfo.classList.remove('active');
+                showError('Failed to upload file. Please try again.');
+                console.error('Upload error:', error);
+            }
+        }
+
+        function clearFile() {
+            document.getElementById('fileInfo').classList.remove('active');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('inputText').value = '';
+        }
+
+        async function summarizeText() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const loading = document.getElementById('loading');
+            const resultSection = document.getElementById('resultSection');
+            const errorMessage = document.getElementById('errorMessage');
+            const summarizeBtn = document.getElementById('summarizeBtn');
+
+            // Reset states
+            errorMessage.classList.remove('active');
+            resultSection.classList.remove('active');
+            document.getElementById('audioPlayer').style.display = 'none';
+
+            // Validation
+            if (!inputText) {
+                showError('Please enter some text or upload a file to summarize.');
+                return;
+            }
+
+            if (inputText.length < 50) {
+                showError('Text is too short. Please provide at least 50 characters.');
+                return;
+            }
+
+            // Show loading
+            loading.classList.add('active');
+            summarizeBtn.disabled = true;
+
+            try {
+                const response = await fetch('/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        text: inputText,
+                        max_length: summaryLength  // Send character count
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSummary = data.summary;
+                    displayResults(data.summary, data.stats);
+                } else {
+                    showError(data.error || 'An error occurred while generating summary.');
+                }
+            } catch (error) {
+                showError('Failed to connect to server. Please try again.');
+                console.error('Error:', error);
+            } finally {
+                loading.classList.remove('active');
+                summarizeBtn.disabled = false;
+            }
+        }
+
+        function displayResults(summary, stats) {
+            // Display summary
+            document.getElementById('summaryText').textContent = summary;
+
+            // Display stats with characters
+            const statsContainer = document.getElementById('statsContainer');
+            statsContainer.innerHTML = `
+                <div class="stat-box">
+                    <span class="stat-value">${stats.original_chars}</span>
+                    <span class="stat-label">Original Characters</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value">${stats.summary_chars}</span>
+                    <span class="stat-label">Summary Characters</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value">${stats.summary_words}</span>
+                    <span class="stat-label">Summary Words</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value">${stats.compression_ratio}%</span>
+                    <span class="stat-label">Compression</span>
+                </div>
+            `;
+
+            document.getElementById('resultSection').classList.add('active');
+        }
+
+        async function convertToSpeech() {
+            if (!currentSummary) return;
+
+            const ttsBtn = document.getElementById('ttsBtn');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioElement = document.getElementById('audioElement');
+
+            ttsBtn.disabled = true;
+            ttsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Audio...';
+
+            try {
+                const response = await fetch('/text-to-speech', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: currentSummary })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    audioElement.src = data.audio_url;
+                    audioPlayer.style.display = 'block';
+                    audioElement.play();
+                } else {
+                    showError(data.error || 'Failed to generate audio.');
+                }
+            } catch (error) {
+                showError('Failed to generate audio. Please try again.');
+                console.error('Error:', error);
+            } finally {
+                ttsBtn.disabled = false;
+                ttsBtn.innerHTML = '<i class="fas fa-volume-up"></i> Convert to Speech';
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('errorMessage').classList.remove('active');
+            document.getElementById('audioPlayer').style.display = 'none';
+            document.getElementById('fileInfo').classList.remove('active');
+            document.getElementById('fileInput').value = '';
+            currentSummary = '';
+            summaryLength = 300;
+            document.getElementById('lengthSlider').value = 300;
+            updateSliderValue(300);
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.classList.add('active');
+        }
+
+        // Enter key support (Ctrl+Enter to summarize)
+        document.getElementById('inputText').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                summarizeText();
+            }
+        });
+    </script>
+</body>
+</html>

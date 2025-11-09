@@ -1,0 +1,76 @@
+# -------------------------
+# Python environment & build
+# -------------------------
+env/
+t5-small-cnn-finetuned/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.manifest
+*.spec
+
+# -------------------------
+# IDE & editor settings
+# -------------------------
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# -------------------------
+# Logs, cache, and temp files
+# -------------------------
+*.log
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+.cache/
+.ipynb_checkpoints/
+
+# -------------------------
+# Model checkpoints / large data
+# -------------------------
+t5-small-cnn-finetuned/
+checkpoints/
+models/
+*.bin
+*.pt
+*.h5
+*.ckpt
+*.weights
+*.pkl
+*.onnx
+*.joblib
+
+# -------------------------
+# Datasets or uploaded files
+# -------------------------
+data/
+datasets/
+uploads/
+outputs/
+
+# -------------------------
+# System files
+# -------------------------
+desktop.ini
+
+# -------------------------
+# Jupyter Notebook autosaves
+# -------------------------
+*.ipynb_checkpoints/
+
+# -------------------------
+# Optional: VS Code virtual environment folder
+# -------------------------
+.python-version
